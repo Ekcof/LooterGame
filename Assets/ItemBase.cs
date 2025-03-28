@@ -34,7 +34,7 @@ public interface IItem
     float Durability { get; }
     float DurabilityLimit { get; }
     float Cost { get; }
-
+    IItemContainer ParentContainer { get; }
 
     void OnTake(IItemContainer container);
     void OnPut(IItemContainer container);
@@ -57,6 +57,7 @@ public class ItemBase : IItem
     [SerializeField] protected float _durabilityLimit;
     [SerializeField] protected float _cost;
 
+    protected IItemContainer _parentContainer;
     protected float _durability;
     protected int _amount;
 
@@ -81,6 +82,7 @@ public class ItemBase : IItem
     public float DurabilityLimit => _durabilityLimit;
     public float Cost => _cost;
 
+    public IItemContainer ParentContainer => _parentContainer;
     public void OnDestroyItem(IItemContainer container)
     {
         throw new NotImplementedException();
