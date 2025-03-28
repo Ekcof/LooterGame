@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public interface IUIWindow
 {
@@ -11,6 +12,8 @@ public abstract partial class UIWindow : MonoBehaviour, IUIWindow
 {
     [SerializeField]
     private Button _closeButton;
+    
+    public UnityEvent OnWindowClosed { get; } = new UnityEvent();
 
     protected virtual void Awake()
     {
@@ -21,6 +24,7 @@ public abstract partial class UIWindow : MonoBehaviour, IUIWindow
     public virtual void Close()
     {
         gameObject.SetActive(false);
+        OnWindowClosed.Invoke();
     }
 
     public virtual IUIWindow Open()
