@@ -215,7 +215,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: InventoryWindow
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8544630800355604766, guid: 433fe9e2a8408634d976f5ea7007c772,
+        type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: -1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4413792060142789236, guid: 433fe9e2a8408634d976f5ea7007c772, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

@@ -2763,7 +2763,7 @@ PrefabInstance:
     - target: {fileID: 1826295450147901684, guid: 268ec0ed5cd97b04fa73e8b3818b4b83,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.00007521333
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4188418044787191830, guid: 268ec0ed5cd97b04fa73e8b3818b4b83,
         type: 3}
@@ -2782,8 +2782,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4650382161075574467, guid: 268ec0ed5cd97b04fa73e8b3818b4b83,
         type: 3}
-      propertyPath: m_AdditionalShaderChannelsFlag
-      value: 25
+      propertyPath: m_VertexColorAlwaysGammaSpace
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4901679453915273597, guid: 268ec0ed5cd97b04fa73e8b3818b4b83,
         type: 3}
