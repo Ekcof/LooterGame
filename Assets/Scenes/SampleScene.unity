@@ -840,7 +840,6 @@ GameObject:
   - component: {fileID: 1477239732}
   - component: {fileID: 1477239731}
   - component: {fileID: 1477239734}
-  - component: {fileID: 1477239735}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -952,51 +951,18 @@ MonoBehaviour:
   debugLog: 0
   statisticsGUI: 0
   statisticsLog: 0
---- !u!114 &1477239735
+--- !u!114 &1794706468 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 2156990444872928830, guid: 268ec0ed5cd97b04fa73e8b3818b4b83,
+    type: 3}
+  m_PrefabInstance: {fileID: 6086173016175736477}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1477239730}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aab4c8111b7c411b9b92cf3dbc5bd4e, type: 3}
+  m_Script: {fileID: 11500000, guid: 965715e52cde146449736c75d58088b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dontDestroyOnLoad: 1
-  runInBackground: 1
-  headlessStartMode: 0
-  editorAutoStart: 0
-  sendRate: 60
-  offlineScene: 
-  onlineScene: 
-  offlineSceneLoadDelay: 0
-  transport: {fileID: 0}
-  networkAddress: localhost
-  maxConnections: 100
-  disconnectInactiveConnections: 0
-  disconnectInactiveTimeout: 60
-  authenticator: {fileID: 0}
-  playerPrefab: {fileID: 0}
-  autoCreatePlayer: 1
-  playerSpawnMethod: 0
-  spawnPrefabs: []
-  exceptionsDisconnect: 1
-  snapshotSettings:
-    bufferTimeMultiplier: 2
-    bufferLimit: 32
-    catchupNegativeThreshold: -1
-    catchupPositiveThreshold: 1
-    catchupSpeed: 0.019999999552965164
-    slowdownSpeed: 0.03999999910593033
-    driftEmaDuration: 1
-    dynamicAdjustment: 1
-    dynamicAdjustmentTolerance: 1
-    deliveryTimeEmaDuration: 2
-  evaluationMethod: 0
-  evaluationInterval: 3
-  timeInterpolationGui: 0
 --- !u!1 &1804394187
 GameObject:
   m_ObjectHideFlags: 0
@@ -2809,7 +2775,7 @@ PrefabInstance:
     - target: {fileID: 1826295450147901684, guid: 268ec0ed5cd97b04fa73e8b3818b4b83,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.00025101367
+      value: 0.000019983014
       objectReference: {fileID: 0}
     - target: {fileID: 4188418044787191830, guid: 268ec0ed5cd97b04fa73e8b3818b4b83,
         type: 3}
@@ -2824,6 +2790,11 @@ PrefabInstance:
     - target: {fileID: 4188418044787191830, guid: 268ec0ed5cd97b04fa73e8b3818b4b83,
         type: 3}
       propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4650382161075574467, guid: 268ec0ed5cd97b04fa73e8b3818b4b83,
+        type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4650382161075574467, guid: 268ec0ed5cd97b04fa73e8b3818b4b83,
@@ -2946,6 +2917,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6099264435306770027, guid: 268ec0ed5cd97b04fa73e8b3818b4b83,
+        type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 8093231297563524764, guid: 268ec0ed5cd97b04fa73e8b3818b4b83,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -2998,6 +2974,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1229147320703508228, guid: f8db70bb29910a7469db27303ac8727b,
+        type: 3}
+      propertyPath: inventoryWindow
+      value: 
+      objectReference: {fileID: 1794706468}
     - target: {fileID: 4617128609396211862, guid: f8db70bb29910a7469db27303ac8727b,
         type: 3}
       propertyPath: m_LocalPosition.x

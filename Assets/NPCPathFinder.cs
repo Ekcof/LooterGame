@@ -14,6 +14,8 @@ public class NPCPathFinder : NetworkBehaviour
 
     private void Start()
     {
+        return;
+        //
         _networkTransform.interpolatePosition = true;
         _networkTransform.interpolateRotation = true;
         if (isServer)
