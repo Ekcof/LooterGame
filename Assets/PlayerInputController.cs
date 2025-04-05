@@ -1,6 +1,7 @@
 using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerInputController : NetworkBehaviour
@@ -18,7 +19,7 @@ public class PlayerInputController : NetworkBehaviour
     [SerializeField] private float lookXLimit = 45.0f;
 
     [Header("UI References")]
-    [SerializeField] private InventoryWindow inventoryWindow;
+    [Inject] private InventoryWindow inventoryWindow;
 
     // Input System references
     private PlayerInput playerInput;
@@ -65,7 +66,7 @@ public class PlayerInputController : NetworkBehaviour
         interactAction = playerInput.actions["Interact"];
 
         // Setup interaction callback
-        interactAction.performed += OnInteract;
+        interactAction.performed += OnInteractPressed;
     }
 
     public override void OnStartLocalPlayer()
@@ -87,7 +88,7 @@ public class PlayerInputController : NetworkBehaviour
         // Unsubscribe from events
         if (interactAction != null)
         {
-            interactAction.performed -= OnInteract;
+            interactAction.performed -= OnInteractPressed;
         }
     }
 
@@ -175,7 +176,7 @@ public class PlayerInputController : NetworkBehaviour
                 currentTargetHolder = itemHolder;
 
                 // Show interaction prompt (could be implemented with UI)
-                Debug.Log("Press E to interact with item holder");
+                //Debug.Log("Press E to interact with item holder");
             }
             else
             {
@@ -188,10 +189,11 @@ public class PlayerInputController : NetworkBehaviour
         }
     }
 
-    private void OnInteract(InputAction.CallbackContext context)
+    private void OnInteractPressed(InputAction.CallbackContext context)
     {
         if (!isLocalPlayer || currentTargetHolder == null) return;
 
+        Debug.Log($"_____Is pressed {context.action.name} {currentTargetHolder.name}");
         // Check if we're close enough to interact
         float distance = Vector3.Distance(transform.position, currentTargetHolder.transform.position);
 
