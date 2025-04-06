@@ -42,10 +42,11 @@ public interface IItem
     /// On destroy item
     /// </summary>
     void OnDestroyItem(IItemContainer container);
+    ItemBase GetCopy();
 }
 
 [Serializable]
-public class ItemBase : IItem
+public abstract class ItemBase : IItem
 {
     [SerializeField] protected string _id;
     [SerializeField] protected Sprite _spritePreview;
@@ -83,18 +84,21 @@ public class ItemBase : IItem
     public float Cost => _cost;
 
     public IItemContainer ParentContainer => _parentContainer;
-    public void OnDestroyItem(IItemContainer container)
-    {
-        throw new NotImplementedException();
-    }
 
-    public void OnPut(IItemContainer container)
-    {
-        throw new NotImplementedException();
-    }
+    public abstract ItemBase GetCopy();
+    public abstract void OnDestroyItem(IItemContainer container);
+    public abstract void OnPut(IItemContainer container);
+    public abstract void OnTake(IItemContainer container);
+}
 
-    public void OnTake(IItemContainer container)
+
+[Serializable]
+public abstract class ItemBase<T> : ItemBase where T : ItemBase
+{
+    public sealed override ItemBase GetCopy()
     {
-        throw new NotImplementedException();
+        var serialized = JsonUtility.ToJson(this);
+        var copy = JsonUtility.FromJson<T>(serialized);
+        return copy;
     }
 }
