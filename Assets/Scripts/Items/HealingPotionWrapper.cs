@@ -11,16 +11,16 @@ public class HealingPotion : ItemBase<HealingPotion>
 {
     public override void OnDestroyItem(IItemContainer container)
     {
-        throw new System.NotImplementedException();
+        //
     }
 
     public override void OnPut(IItemContainer container)
     {
-        throw new System.NotImplementedException();
+        //
     }
 
     public override void OnTake(IItemContainer container)
     {
-        throw new System.NotImplementedException();
+        //
     }
 }

@@ -23,13 +23,20 @@ public abstract partial class UIWindow : MonoBehaviour, IUIWindow
 
     public virtual void Close()
     {
+        SetInteractive(false);
         gameObject.SetActive(false);
         OnWindowClosed.Invoke();
     }
 
     public virtual IUIWindow Open()
     {
-        gameObject.SetActive(true);
+        SetInteractive(true);
+		gameObject.SetActive(true);
         return this;
     }
+
+    public virtual void SetInteractive(bool isInteractive)
+	{
+		_closeButton.interactable = isInteractive;
+	}
 }

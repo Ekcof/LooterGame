@@ -16,7 +16,8 @@ public interface IItem
     string Id { get; }
     Sprite SpritePreview { get; }
     ItemType ItemType { get; }
-    float Weight { get; }
+    int SlotSize { get; }
+	float Weight { get; }
     /// <summary>
     /// Total weight of stackable items
     /// </summary>
@@ -42,7 +43,8 @@ public interface IItem
     /// On destroy item
     /// </summary>
     void OnDestroyItem(IItemContainer container);
-    ItemBase GetCopy();
+    ItemBase GetCopy(int count = 1);
+    void SetAmount(int count);
 }
 
 [Serializable]
@@ -53,11 +55,11 @@ public abstract class ItemBase : IItem
     [SerializeField] protected ItemType _itemType;
     [SerializeField] protected float _weight;
     [SerializeField] protected bool _isStackable;
-    [SerializeField] protected int _amountLimit;
+    [SerializeField, ShowIf("_isStackable", true)] protected int _amountLimit;
     [SerializeField] protected bool _isBreakable;
     [SerializeField] protected float _durabilityLimit;
     [SerializeField] protected float _cost;
-
+    [Min(1), SerializeField] protected int _slotSize;
     protected IItemContainer _parentContainer;
     protected float _durability;
     protected int _amount;
@@ -82,23 +84,34 @@ public abstract class ItemBase : IItem
 
     public float DurabilityLimit => _durabilityLimit;
     public float Cost => _cost;
+	public int SlotSize => _slotSize;
 
-    public IItemContainer ParentContainer => _parentContainer;
+	public IItemContainer ParentContainer => _parentContainer;
 
-    public abstract ItemBase GetCopy();
+
+	public abstract ItemBase GetCopy(int count = 1);
     public abstract void OnDestroyItem(IItemContainer container);
     public abstract void OnPut(IItemContainer container);
     public abstract void OnTake(IItemContainer container);
+
+	public virtual void SetAmount(int count)
+	{
+		if(_amount == 0)
+        {
+            _amount = count;
+		}
+	}
 }
 
 
 [Serializable]
 public abstract class ItemBase<T> : ItemBase where T : ItemBase
 {
-    public sealed override ItemBase GetCopy()
+    public sealed override ItemBase GetCopy(int count = 1)
     {
         var serialized = JsonUtility.ToJson(this);
         var copy = JsonUtility.FromJson<T>(serialized);
+        copy.SetAmount(count);
         return copy;
     }
 }

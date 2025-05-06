@@ -12,3 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0f6ad2600aca1e4488db4be3ceb838f, type: 3}
   m_Name: Stamina Potion
   m_EditorClassIdentifier: 
+  _item:
+    _id: SmallStaminaPotion
+    _spritePreview: {fileID: 0}
+    _itemType: 1
+    _weight: 0.1
+    _isStackable: 0
+    _amountLimit: 0
+    _isBreakable: 0
+    _durabilityLimit: 0
+    _cost: 15

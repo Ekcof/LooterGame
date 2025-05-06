@@ -607,6 +607,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _capacity: 10
+  _itemsToAdd:
+  - ItemWrapper: {fileID: 11400000, guid: 4ccc383cf2ad1634599522aa97436326, type: 2}
+    Count: 1
 --- !u!65 &377903899
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3014,7 +3017,7 @@ PrefabInstance:
     - target: {fileID: 1826295450147901684, guid: 268ec0ed5cd97b04fa73e8b3818b4b83,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.0000622915
+      value: 0.000027864926
       objectReference: {fileID: 0}
     - target: {fileID: 4188418044787191830, guid: 268ec0ed5cd97b04fa73e8b3818b4b83,
         type: 3}

@@ -31,7 +31,7 @@ public class PlayerInputController : NetworkBehaviour
 
     // Component references
     private CharacterController characterController;
-    private ItemHolder playerInventory;
+    private NPCInventory playerInventory;
 
     // Movement variables
     private Vector3 moveDirection = Vector3.zero;
@@ -46,9 +46,10 @@ public class PlayerInputController : NetworkBehaviour
 
     private void Awake()
     {
-        // Get components
-        characterController = GetComponent<CharacterController>();
-        playerInventory = GetComponent<ItemHolder>();
+        Debug.Log($"_____Awake {gameObject.name} {nameof(PlayerInputController)}");
+		// Get components
+		characterController = GetComponent<CharacterController>();
+        playerInventory = GetComponent<NPCInventory>();
 
         // Setup Input System
         playerInput = GetComponent<PlayerInput>();
@@ -199,37 +200,50 @@ public class PlayerInputController : NetworkBehaviour
 
         if (distance <= interactionDistance)
         {
-            // If there's only one item, take it directly
-            if (currentTargetHolder.ItemCount == 1)
+			Debug.Log($"_____Is pressed Distance is  enough {distance}");
+			// If there's only one item, take it directly
+			if (currentTargetHolder.ItemCount == 1)
             {
-                TakeItemFromHolder(currentTargetHolder, 0);
+				Debug.Log($"_____Is pressed Take the item {distance}");
+				TakeItemFromHolder(currentTargetHolder, 0);
             }
             // Otherwise open the inventory window
             else if (currentTargetHolder.ItemCount > 1)
             {
-                OpenInventoryWindow(currentTargetHolder);
+				Debug.Log($"_____Is pressed Open window with {currentTargetHolder.ItemCount} items {distance}");
+				OpenInventoryWindow(currentTargetHolder);
             }
-        }
-    }
+
+		}
+        else
+        {
+			Debug.Log($"_____Is pressed Distance is not enought {distance}");
+		}
+
+	}
 
     [Command]
     private void TakeItemFromHolder(ItemHolder holder, int itemIndex)
     {
+        Debug.Log($"TakeItemFromHolder 0 playerInventory == null {playerInventory == null}");
         if (holder == null || playerInventory == null || playerInventory.IsFull)
             return;
-
-        ItemBase item = holder.GetItem(itemIndex);
-
-        if (item != null)
+		Debug.Log($"TakeItemFromHolder 1");
+		ItemBase item = holder.GetItem(itemIndex);
+		Debug.Log($"TakeItemFromHolder 2");
+		if (item != null)
         {
-            if (holder.RemoveItem(item))
+			Debug.Log($"TakeItemFromHolder 3");
+			if (holder.TryRemoveItem(item))
             {
-                playerInventory.AddItem(item);
-            }
+                playerInventory.TryAddItem(item);
+				Debug.Log($"TakeItemFromHolder 4");
+			}
         }
     }
 
-    private void OpenInventoryWindow(ItemHolder holder)
+
+	private void OpenInventoryWindow(ItemHolder holder)
     {
         if (inventoryWindow != null)
         {
