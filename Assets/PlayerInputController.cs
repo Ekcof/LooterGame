@@ -1,4 +1,5 @@
 using Mirror;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -6,275 +7,285 @@ using Zenject;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerInputController : NetworkBehaviour
 {
-    [Header("Movement Settings")]
-    [SerializeField] private float walkingSpeed = 7.5f;
-    [SerializeField] private float runningSpeed = 11.5f;
-    [SerializeField] private float jumpSpeed = 8.0f;
-    [SerializeField] private float gravity = 20.0f;
-    [SerializeField] private float interactionDistance = 3.0f;
+	[Header("Movement Settings")]
+	[SerializeField] private float _walkingSpeed = 7.5f;
+	[SerializeField] private float _runningSpeed = 11.5f;
+	[SerializeField] private float _jumpSpeed = 8.0f;
+	[SerializeField] private float _gravity = 20.0f;
+	[SerializeField] private float _interactionDistance = 3.0f;
 
-    [Header("Camera Settings")]
-    [SerializeField] private Camera playerCamera;
-    [SerializeField] private float lookSpeed = 2.0f;
-    [SerializeField] private float lookXLimit = 45.0f;
+	[Header("Camera Settings")]
+	[SerializeField] private Camera _playerCamera;
+	[SerializeField] private float _lookSpeed = 2.0f;
+	[SerializeField] private float _lookXLimit = 45.0f;
 
-    [Header("UI References")]
-    [Inject] private InventoryWindow inventoryWindow;
+	[SerializeField] private NPCInventory _playerInventory;
 
-    // Input System references
-    private PlayerInput playerInput;
-    private InputAction moveAction;
-    private InputAction lookAction;
-    private InputAction jumpAction;
-    private InputAction sprintAction;
-    private InputAction interactAction;
+	[Header("UI References")]
+	[Inject] private InventoryWindow _inventoryWindow;
 
-    // Component references
-    private CharacterController characterController;
-    private NPCInventory playerInventory;
+	// Input System references
+	private PlayerInput _playerInput;
+	private InputAction _moveAction;
+	private InputAction _lookAction;
+	private InputAction _jumpAction;
+	private InputAction _sprintAction;
+	private InputAction _interactAction;
+	private InputAction _inventoryAction;
 
-    // Movement variables
-    private Vector3 moveDirection = Vector3.zero;
-    private float rotationX = 0;
+	// Component references
+	private CharacterController _characterController;
 
-    // Interaction variables
-    private bool isInteracting = false;
-    private ItemHolder currentTargetHolder = null;
+	// Movement variables
+	private Vector3 _moveDirection = Vector3.zero;
+	private float _rotationX = 0;
 
-    [HideInInspector]
-    public bool canMove = true;
+	// Interaction variables
+	private bool _isInteracting = false;
+	private ItemHolder _currentTargetHolder = null;
 
-    private void Awake()
-    {
-        Debug.Log($"_____Awake {gameObject.name} {nameof(PlayerInputController)}");
+	[HideInInspector]
+	public bool _canMove = true;
+
+	private void Awake()
+	{
+		Debug.Log($"_____Awake {gameObject.name} {nameof(PlayerInputController)}");
 		// Get components
-		characterController = GetComponent<CharacterController>();
-        playerInventory = GetComponent<NPCInventory>();
+		_characterController = GetComponent<CharacterController>();
 
-        // Setup Input System
-        playerInput = GetComponent<PlayerInput>();
-        if (playerInput == null)
-        {
-            playerInput = gameObject.AddComponent<PlayerInput>();
-            playerInput.defaultActionMap = "Player";
-        }
+		// Setup Input System
+		_playerInput = GetComponent<PlayerInput>();
+		if (_playerInput == null)
+		{
+			_playerInput = gameObject.AddComponent<PlayerInput>();
+			_playerInput.defaultActionMap = "Player";
+		}
 
-        // Get input actions
-        moveAction = playerInput.actions["Move"];
-        lookAction = playerInput.actions["Look"];
-        jumpAction = playerInput.actions["Jump"];
-        sprintAction = playerInput.actions["Sprint"];
-        interactAction = playerInput.actions["Interact"];
+		// Get input actions
+		_moveAction = _playerInput.actions["Move"];
+		_lookAction = _playerInput.actions["Look"];
+		_jumpAction = _playerInput.actions["Jump"];
+		_sprintAction = _playerInput.actions["Sprint"];
+		_interactAction = _playerInput.actions["Interact"];
+		_inventoryAction = _playerInput.actions["Inventory"];
 
-        // Setup interaction callback
-        interactAction.performed += OnInteractPressed;
-    }
+		// Setup interaction callback
+		_interactAction.performed += OnInteractPressed;
 
-    public override void OnStartLocalPlayer()
-    {
-        base.OnStartLocalPlayer();
+		_inventoryAction.performed += OnInventoryPressed;
+	}
 
-        if (playerCamera != null)
-        {
-            playerCamera.gameObject.SetActive(true);
-        }
+	private void OnInventoryPressed(InputAction.CallbackContext context)
+	{
+		_isInteracting = true;
+		_inventoryWindow.OpenInventory(_playerInventory);
+	}
 
-        // Lock cursor
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
+	public override void OnStartLocalPlayer()
+	{
+		base.OnStartLocalPlayer();
 
-    private void OnDestroy()
-    {
-        // Unsubscribe from events
-        if (interactAction != null)
-        {
-            interactAction.performed -= OnInteractPressed;
-        }
-    }
+		if (_playerCamera != null)
+		{
+			_playerCamera.gameObject.SetActive(true);
+		}
 
-    private void Update()
-    {
-        if (!isLocalPlayer)
-        {
-            if (playerCamera != null)
-            {
-                playerCamera.gameObject.SetActive(false);
-            }
-            return;
-        }
+		// Lock cursor
+		Cursor.lockState = CursorLockMode.Locked;
+		Cursor.visible = false;
+	}
 
-        // Handle movement
-        HandleMovement();
+	private void OnDestroy()
+	{
+		// Unsubscribe from events
+		if (_interactAction != null)
+		{
+			_interactAction.performed -= OnInteractPressed;
+		}
+	}
 
-        // Check for interactive objects
-        CheckForInteractiveObjects();
-    }
+	private void Update()
+	{
+		if (!isLocalPlayer)
+		{
+			if (_playerCamera != null)
+			{
+				_playerCamera.gameObject.SetActive(false);
+			}
+			return;
+		}
 
-    private void HandleMovement()
-    {
-        if (!canMove) return;
+		// Handle movement
+		HandleMovement();
 
-        // Get input values
-        Vector2 moveInput = moveAction.ReadValue<Vector2>();
-        Vector2 lookInput = lookAction.ReadValue<Vector2>();
-        bool isRunning = sprintAction.ReadValue<float>() > 0.1f;
+		// Check for interactive objects
+		CheckForInteractiveObjects();
+	}
 
-        // Calculate movement direction
-        Vector3 forward = transform.TransformDirection(Vector3.forward);
-        Vector3 right = transform.TransformDirection(Vector3.right);
+	private void HandleMovement()
+	{
+		if (!_canMove) return;
 
-        float curSpeedX = (isRunning ? runningSpeed : walkingSpeed) * moveInput.y;
-        float curSpeedY = (isRunning ? runningSpeed : walkingSpeed) * moveInput.x;
+		// Get input values
+		Vector2 moveInput = _moveAction.ReadValue<Vector2>();
+		Vector2 lookInput = _lookAction.ReadValue<Vector2>();
+		bool isRunning = _sprintAction.ReadValue<float>() > 0.1f;
 
-        float movementDirectionY = moveDirection.y;
-        moveDirection = (forward * curSpeedX) + (right * curSpeedY);
+		// Calculate movement direction
+		Vector3 forward = transform.TransformDirection(Vector3.forward);
+		Vector3 right = transform.TransformDirection(Vector3.right);
 
-        // Handle jumping
-        if (jumpAction.triggered && characterController.isGrounded)
-        {
-            moveDirection.y = jumpSpeed;
-        }
-        else
-        {
-            moveDirection.y = movementDirectionY;
-        }
+		float curSpeedX = (isRunning ? _runningSpeed : _walkingSpeed) * moveInput.y;
+		float curSpeedY = (isRunning ? _runningSpeed : _walkingSpeed) * moveInput.x;
 
-        // Apply gravity
-        if (!characterController.isGrounded)
-        {
-            moveDirection.y -= gravity * Time.deltaTime;
-        }
+		float movementDirectionY = _moveDirection.y;
+		_moveDirection = (forward * curSpeedX) + (right * curSpeedY);
 
-        // Move the controller
-        characterController.Move(moveDirection * Time.deltaTime);
+		// Handle jumping
+		if (_jumpAction.triggered && _characterController.isGrounded)
+		{
+			_moveDirection.y = _jumpSpeed;
+		}
+		else
+		{
+			_moveDirection.y = movementDirectionY;
+		}
 
-        // Player and camera rotation
-        rotationX += -lookInput.y * lookSpeed;
-        rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
+		// Apply gravity
+		if (!_characterController.isGrounded)
+		{
+			_moveDirection.y -= _gravity * Time.deltaTime;
+		}
 
-        if (playerCamera != null)
-        {
-            playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
-        }
+		// Move the controller
+		_characterController.Move(_moveDirection * Time.deltaTime);
 
-        transform.rotation *= Quaternion.Euler(0, lookInput.x * lookSpeed, 0);
-    }
+		// Player and camera rotation
+		_rotationX += -lookInput.y * _lookSpeed;
+		_rotationX = Mathf.Clamp(_rotationX, -_lookXLimit, _lookXLimit);
 
-    private void CheckForInteractiveObjects()
-    {
-        if (playerCamera == null) return;
+		if (_playerCamera != null)
+		{
+			_playerCamera.transform.localRotation = Quaternion.Euler(_rotationX, 0, 0);
+		}
 
-        RaycastHit hit;
-        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+		transform.rotation *= Quaternion.Euler(0, lookInput.x * _lookSpeed, 0);
+	}
 
-        if (Physics.Raycast(ray, out hit, interactionDistance))
-        {
-            ItemHolder itemHolder = hit.collider.GetComponent<ItemHolder>();
+	private void CheckForInteractiveObjects()
+	{
+		if (_playerCamera == null) return;
 
-            if (itemHolder != null && itemHolder != playerInventory)
-            {
-                currentTargetHolder = itemHolder;
+		RaycastHit hit;
+		Ray ray = _playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
 
-                // Show interaction prompt (could be implemented with UI)
-                //Debug.Log("Press E to interact with item holder");
-            }
-            else
-            {
-                currentTargetHolder = null;
-            }
-        }
-        else
-        {
-            currentTargetHolder = null;
-        }
-    }
+		if (Physics.Raycast(ray, out hit, _interactionDistance))
+		{
+			ItemHolder itemHolder = hit.collider.GetComponent<ItemHolder>();
 
-    private void OnInteractPressed(InputAction.CallbackContext context)
-    {
-        if (!isLocalPlayer || currentTargetHolder == null) return;
+			if (itemHolder != null && itemHolder != _playerInventory)
+			{
+				_currentTargetHolder = itemHolder;
 
-        Debug.Log($"_____Is pressed {context.action.name} {currentTargetHolder.name}");
-        // Check if we're close enough to interact
-        float distance = Vector3.Distance(transform.position, currentTargetHolder.transform.position);
+				// Show interaction prompt (could be implemented with UI)
+				//Debug.Log("Press E to interact with item holder");
+			}
+			else
+			{
+				_currentTargetHolder = null;
+			}
+		}
+		else
+		{
+			_currentTargetHolder = null;
+		}
+	}
 
-        if (distance <= interactionDistance)
-        {
+	private void OnInteractPressed(InputAction.CallbackContext context)
+	{
+		if (!isLocalPlayer || _currentTargetHolder == null) return;
+
+		Debug.Log($"_____Is pressed {context.action.name} {_currentTargetHolder.name}");
+		// Check if we're close enough to interact
+		float distance = Vector3.Distance(transform.position, _currentTargetHolder.transform.position);
+
+		if (distance <= _interactionDistance)
+		{
 			Debug.Log($"_____Is pressed Distance is  enough {distance}");
 			// If there's only one item, take it directly
-			if (currentTargetHolder.ItemCount == 1)
-            {
+			if (_currentTargetHolder.ItemCount == 1)
+			{
 				Debug.Log($"_____Is pressed Take the item {distance}");
-				TakeItemFromHolder(currentTargetHolder, 0);
-            }
-            // Otherwise open the inventory window
-            else if (currentTargetHolder.ItemCount > 1)
-            {
-				Debug.Log($"_____Is pressed Open window with {currentTargetHolder.ItemCount} items {distance}");
-				OpenInventoryWindow(currentTargetHolder);
-            }
+				TakeItemFromHolder(_currentTargetHolder, 0);
+			}
+			// Otherwise open the inventory window
+			else if (_currentTargetHolder.ItemCount > 1)
+			{
+				Debug.Log($"_____Is pressed Open window with {_currentTargetHolder.ItemCount} items {distance}");
+				OpenInventoryWindow(_currentTargetHolder);
+			}
 
 		}
-        else
-        {
+		else
+		{
 			Debug.Log($"_____Is pressed Distance is not enought {distance}");
 		}
 
 	}
 
-    [Command]
-    private void TakeItemFromHolder(ItemHolder holder, int itemIndex)
-    {
-        Debug.Log($"TakeItemFromHolder 0 playerInventory == null {playerInventory == null}");
-        if (holder == null || playerInventory == null || playerInventory.IsFull)
-            return;
+	[Command]
+	private void TakeItemFromHolder(ItemHolder holder, int itemIndex)
+	{
+		Debug.Log($"TakeItemFromHolder 0 playerInventory == null {_playerInventory == null}");
+		if (holder == null || _playerInventory == null || _playerInventory.IsFull)
+			return;
 		Debug.Log($"TakeItemFromHolder 1");
 		ItemBase item = holder.GetItem(itemIndex);
 		Debug.Log($"TakeItemFromHolder 2");
 		if (item != null)
-        {
+		{
 			Debug.Log($"TakeItemFromHolder 3");
-			if (holder.TryRemoveItem(item))
-            {
-                playerInventory.TryAddItem(item);
+			if (_playerInventory.TryAddItem(item))
+			{
+				holder.TryRemoveItem(item);
 				Debug.Log($"TakeItemFromHolder 4");
 			}
-        }
-    }
+		}
+	}
 
 
 	private void OpenInventoryWindow(ItemHolder holder)
-    {
-        if (inventoryWindow != null)
-        {
-            // Unlock cursor for inventory interaction
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+	{
+		if (_inventoryWindow != null)
+		{
+			// Unlock cursor for inventory interaction
+			Cursor.lockState = CursorLockMode.None;
+			Cursor.visible = true;
 
-            // Disable movement while inventory is open
-            canMove = false;
+			// Disable movement while inventory is open
+			_canMove = false;
 
-            // Open the inventory window
-            inventoryWindow.OpenInventory(holder);
+			// Open the inventory window
+			_inventoryWindow.OpenInventory(holder);
 
-            // Subscribe to window close event
-            inventoryWindow.OnWindowClosed.AddListener(OnInventoryWindowClosed);
-        }
-    }
+			// Subscribe to window close event
+			_inventoryWindow.OnWindowClosed.AddListener(OnInventoryWindowClosed);
+		}
+	}
 
-    private void OnInventoryWindowClosed()
-    {
-        // Re-lock cursor
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+	private void OnInventoryWindowClosed()
+	{
+		// Re-lock cursor
+		Cursor.lockState = CursorLockMode.Locked;
+		Cursor.visible = false;
 
-        // Re-enable movement
-        canMove = true;
+		// Re-enable movement
+		_canMove = true;
 
-        // Unsubscribe from event
-        if (inventoryWindow != null)
-        {
-            inventoryWindow.OnWindowClosed.RemoveListener(OnInventoryWindowClosed);
-        }
-    }
+		// Unsubscribe from event
+		if (_inventoryWindow != null)
+		{
+			_inventoryWindow.OnWindowClosed.RemoveListener(OnInventoryWindowClosed);
+		}
+	}
 }

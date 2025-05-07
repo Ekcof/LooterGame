@@ -407,15 +407,16 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  walkingSpeed: 7.5
-  runningSpeed: 11.5
-  jumpSpeed: 8
-  gravity: 20
-  interactionDistance: 3
-  playerCamera: {fileID: 6926954980416666565}
-  lookSpeed: 1
-  lookXLimit: 45
-  canMove: 1
+  _walkingSpeed: 7.5
+  _runningSpeed: 11.5
+  _jumpSpeed: 8
+  _gravity: 20
+  _interactionDistance: 3
+  _playerCamera: {fileID: 6926954980416666565}
+  _lookSpeed: 2
+  _lookXLimit: 45
+  _playerInventory: {fileID: 8609226924807649391}
+  _canMove: 1
 --- !u!114 &7962171436404844423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -446,7 +447,7 @@ MonoBehaviour:
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 6926954980416666565}
 --- !u!114 &8609226924807649391
 MonoBehaviour:
   m_ObjectHideFlags: 0

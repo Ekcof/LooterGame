@@ -4,6 +4,7 @@ using System.Linq;
 
 public interface IItemContainer
 {
+	IReadOnlyList<ItemBase> Items { get; }
 	bool IsFull { get; }
 	int Capacity { get; }
 	bool TryAddItem(ItemBase item);
@@ -17,7 +18,7 @@ public class ItemContainer : IItemContainer
 	public int Capacity => _totalSlots - _items.Sum(s => s.SlotSize);
 	private List<ItemBase> _items = new List<ItemBase>();
 	private int _totalSlots = 10; // Default slots
-
+	public IReadOnlyList<ItemBase> Items => _items;
 
 	public bool TryAddItem(ItemBase item)
 	{
