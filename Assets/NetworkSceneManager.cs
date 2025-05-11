@@ -1,10 +1,27 @@
 using Mirror;
+using UnityEngine;
+using Zenject;
 
 public class NetworkSceneManager : NetworkManager
 {
+    [Inject] DiContainer _container;
 
+	public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+	{
+		Transform startPos = GetStartPosition();
+
+		var playerGO = _container.InstantiatePrefab(
+			playerPrefab,
+			startPos
+		);
+
+		playerGO.transform.position = startPos != null ? startPos.position : Vector3.zero;
+		playerGO.transform.rotation = startPos != null ? startPos.rotation : Quaternion.identity;
+
+		playerGO.name = $"{playerPrefab.name} [connId={conn.connectionId}]";
+		NetworkServer.AddPlayerForConnection(conn, playerGO);
+	}
 }
-
 
 public static class CustomSerialization
 {

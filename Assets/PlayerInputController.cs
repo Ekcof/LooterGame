@@ -1,5 +1,6 @@
 using Mirror;
 using System;
+using UnityEditor.PackageManager.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -21,7 +22,6 @@ public class PlayerInputController : NetworkBehaviour
 
 	[SerializeField] private NPCInventory _playerInventory;
 
-	[Header("UI References")]
 	[Inject] private InventoryWindow _inventoryWindow;
 
 	// Input System references
@@ -78,6 +78,16 @@ public class PlayerInputController : NetworkBehaviour
 	private void OnInventoryPressed(InputAction.CallbackContext context)
 	{
 		_isInteracting = true;
+		if (_inventoryWindow == null)
+		{
+			UnityEngine.Debug.Log($"No _inventoryWindow in container");
+			return;
+		}
+		if (_playerInventory == null)
+		{
+			UnityEngine.Debug.Log($"No _playerInventory found");
+			return;
+		}
 		_inventoryWindow.OpenInventory(_playerInventory);
 	}
 
@@ -106,7 +116,10 @@ public class PlayerInputController : NetworkBehaviour
 
 	private void Update()
 	{
-		if (!isLocalPlayer)
+		if (UIWindow.IsActive)
+			return;
+
+		if (!_isLocalPlayer)
 		{
 			if (_playerCamera != null)
 			{
@@ -203,7 +216,7 @@ public class PlayerInputController : NetworkBehaviour
 
 	private void OnInteractPressed(InputAction.CallbackContext context)
 	{
-		if (!isLocalPlayer || _currentTargetHolder == null) return;
+		if (!_isLocalPlayer || _currentTargetHolder == null) return;
 
 		Debug.Log($"_____Is pressed {context.action.name} {_currentTargetHolder.name}");
 		// Check if we're close enough to interact

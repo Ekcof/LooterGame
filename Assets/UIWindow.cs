@@ -12,8 +12,11 @@ public abstract partial class UIWindow : MonoBehaviour, IUIWindow
 {
     [SerializeField]
     private Button _closeButton;
-    
-    public UnityEvent OnWindowClosed { get; } = new UnityEvent();
+    [SerializeField]
+    private Canvas _canvas;
+    public static bool IsActive { get; private set; }
+
+	public UnityEvent OnWindowClosed { get; } = new UnityEvent();
 
     protected virtual void Awake()
     {
@@ -23,16 +26,24 @@ public abstract partial class UIWindow : MonoBehaviour, IUIWindow
 
     public virtual void Close()
     {
+        IsActive = false;
+		Debug.Log($"____! Close {name}");
         SetInteractive(false);
-        gameObject.SetActive(false);
-        OnWindowClosed.Invoke();
+        _canvas.enabled = false;
+		Cursor.lockState = CursorLockMode.Locked;
+		Cursor.visible = false;
+		OnWindowClosed.Invoke();
     }
 
     public virtual IUIWindow Open()
     {
-        SetInteractive(true);
+        IsActive = true;
+		SetInteractive(true);
+        _canvas.enabled = true;
 		gameObject.SetActive(true);
-        return this;
+		Cursor.lockState = CursorLockMode.Confined;
+		Cursor.visible = true;
+		return this;
     }
 
     public virtual void SetInteractive(bool isInteractive)

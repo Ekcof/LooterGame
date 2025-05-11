@@ -8,7 +8,7 @@ namespace Mirror.Examples.Benchmark
 
         void Update()
         {
-            if (!isLocalPlayer) return;
+            if (!_isLocalPlayer) return;
 
             float h = Input.GetAxis("Horizontal");
             float v = Input.GetAxis("Vertical");

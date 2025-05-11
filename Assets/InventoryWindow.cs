@@ -61,15 +61,11 @@ public class InventoryWindow : UIWindow
 	public override IUIWindow Open()
 	{
 		base.Open();
+		ClearRows();
 
 		if (_itemContainer != null || _inventory != null)
 		{
 			DisplayItems();
-		}
-		else
-		{
-			// Clear the inventory if no container is provided
-			ClearRows();
 		}
 
 		return this;
@@ -78,7 +74,6 @@ public class InventoryWindow : UIWindow
 	private void DisplayItems()
 	{
 		// Clear existing rows
-		ClearRows();
 
 		List<ItemBase> items = null;
 

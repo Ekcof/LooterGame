@@ -1,4 +1,5 @@
 using Installers;
+using System.Diagnostics;
 
 public class MainInstaller : BaseInstaller
 {
@@ -8,7 +9,8 @@ public class MainInstaller : BaseInstaller
 
         foreach (var window in windows)
         {
-            Container.Bind(window.GetType()).FromInstance(window).AsSingle();
+            UnityEngine.Debug.Log($"_____Add {window.name} to container");
+			Container.Bind(window.GetType()).FromInstance(window).AsSingle();
         }
     }
 }

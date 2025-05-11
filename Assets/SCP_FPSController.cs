@@ -21,7 +21,7 @@ public class SC_FPSController : NetworkBehaviour
 
     void Start()
     {
-        if (!isLocalPlayer && playerCamera != null)
+        if (!_isLocalPlayer && playerCamera != null)
         {
             playerCamera.gameObject.SetActive(false);
             return;
@@ -36,7 +36,7 @@ public class SC_FPSController : NetworkBehaviour
 
     void Update()
     {
-        if (!isLocalPlayer)
+        if (!_isLocalPlayer)
             return;
 
         // We are grounded, so recalculate move direction based on axes

@@ -32,7 +32,7 @@ namespace Mirror.Examples.Tanks
             if(!Application.isFocused) return; 
 
             // movement for local player
-            if (isLocalPlayer)
+            if (_isLocalPlayer)
             {
                 // rotate
                 float horizontal = Input.GetAxis("Horizontal");
