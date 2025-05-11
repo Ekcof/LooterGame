@@ -2986,7 +2986,7 @@ PrefabInstance:
     - target: {fileID: 1826295450147901684, guid: 268ec0ed5cd97b04fa73e8b3818b4b83,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000061035156
+      value: 0.0004021667
       objectReference: {fileID: 0}
     - target: {fileID: 2963794573855242200, guid: 268ec0ed5cd97b04fa73e8b3818b4b83,
         type: 3}
