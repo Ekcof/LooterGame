@@ -9,7 +9,8 @@ public class InventorySlot : MonoBehaviour
 
     public void SetEmptyView()
     {
-        _title.SetEmpty();
+        gameObject.SetActive(false); // TODO: Remove
+		_title.SetEmpty();
         _numText.SetEmpty();
         _image.enabled = false;
     }

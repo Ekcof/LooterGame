@@ -65,13 +65,13 @@ public class InventoryWindow : UIWindow
 
 		if (_itemContainer != null || _inventory != null)
 		{
-			DisplayItems();
+			DisplayAllItems();
 		}
 
 		return this;
 	}
 
-	private void DisplayItems()
+	private void DisplayAllItems()
 	{
 		// Clear existing rows
 
@@ -96,7 +96,6 @@ public class InventoryWindow : UIWindow
 		{
 			remainingItems = new List<IItem>(_rows[i].SetItemViews(remainingItems));
 		}
-
 	}
 
 	private void ClearRows()
